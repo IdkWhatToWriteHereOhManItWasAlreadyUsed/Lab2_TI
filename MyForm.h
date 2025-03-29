@@ -499,9 +499,9 @@ namespace $safeprojectname$
 				std::ifstream file(msclr::interop::marshal_as<std::string>(openFileDialog1->FileName), std::ifstream::ate | std::ifstream::binary);
 				if (file) {
 					std::streampos size = file.tellg();
-					if (size > 3000000)
+					if (size > 130000000)
 					{
-						MessageBox::Show("Слишком большой файл (выбирайте не более 3 мегабайт)");
+						MessageBox::Show("Слишком большой файл (выбирайте не более 100 мегабайт)");
 						return;
 					}				
 				}
