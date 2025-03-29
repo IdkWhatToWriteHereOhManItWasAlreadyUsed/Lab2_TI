@@ -43,11 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Tests\Test1\test.txt">
-      <Filter>Tests\Test1</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <Media Include="C:\Users\Дима\Music\test.mp3">
       <Filter>Tests\Test2</Filter>
     </Media>
