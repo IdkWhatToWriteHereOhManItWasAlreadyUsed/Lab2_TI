@@ -502,7 +502,7 @@ namespace $safeprojectname$
 					std::streampos size = file.tellg();
 					if (size > 130000000)
 					{
-						MessageBox::Show("Слишком большой файл (выбирайте не более 100 мегабайт)");
+						MessageBox::Show("Слишком большой файл (выбирайте не более 100 MB)");
 						return;
 					}				
 				}
