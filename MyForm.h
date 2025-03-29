@@ -269,9 +269,13 @@ namespace $safeprojectname$
 				this->label5->TabIndex = 11;
 				this->label5->Text = L"Исходные байты";
 				// 
+				// saveFileDialog1
+				// 
+				this->saveFileDialog1->RestoreDirectory = true;
+				// 
 				// openFileDialog1
 				// 
-				this->openFileDialog1->FileName = L"openFileDialog1";
+				this->openFileDialog1->RestoreDirectory = true;
 				// 
 				// label6
 				// 
@@ -354,7 +358,7 @@ namespace $safeprojectname$
 			}
 			const size_t totalBytes = bitArray.size() / bitsPerByte;
 			size_t n;
-			if (totalBytes < 16) {
+			if (totalBytes < 32) {
 				n = totalBytes / 2;
 			}
 			else {
@@ -396,7 +400,7 @@ namespace $safeprojectname$
 			}
 
 			const size_t totalBytes = bitArray.size() / bitsPerByte / 2;
-			size_t n = std::min(totalBytes, static_cast<size_t>(32)); 
+			size_t n = std::min(totalBytes, static_cast<size_t>(16)); 
 			result << "                      Первые " << n << " байтов: \n";
 			for (size_t i = 0; i < n && i < totalBytes; ++i) {
 				for (size_t j = 0; j < bitsPerByte; ++j) {
@@ -441,17 +445,22 @@ namespace $safeprojectname$
 			}
 
 			RegisterTextBox->Text = msclr::interop::marshal_as<System::String^>(filteredKey);
+			int a = GetTickCount();
 
 			std::vector<uint8_t> generatedKey = generateKey(keyBytes, encpyptor->plainText.size());
 
+
+			MessageBox::Show(msclr::interop::marshal_as<System::String^>(GetTickCount() - a));
 			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey)) + msclr::interop::marshal_as<System::String^>(formatBitsBinaryInfo(generatedKey));
-
-
 			encpyptor->cipherText.resize(encpyptor->plainText.size());
+
+			GetTickCount();
 
 			for (size_t j = 0; j < encpyptor->plainText.size(); ++j) {
 				encpyptor->cipherText[j] = generatedKey[j] ^ encpyptor->plainText[j];
 			}
+
+			MessageBox::Show(msclr::interop::marshal_as<System::String^>(GetTickCount() - a));
 
 			CipheredTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(encpyptor->cipherText));
 		
@@ -489,9 +498,9 @@ namespace $safeprojectname$
 				std::ifstream file(msclr::interop::marshal_as<std::string>(openFileDialog1->FileName), std::ifstream::ate | std::ifstream::binary);
 				if (file) {
 					std::streampos size = file.tellg();
-					if (size > 1000000)
+					if (size > 3000000)
 					{
-						MessageBox::Show("Слишком большой файл");
+						MessageBox::Show("Слишком большой файл (выбирайте не более 3 мегабайт)");
 						return;
 					}				
 				}
