@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{1a84f126-2127-4ba3-9352-3a057e107e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Test1">
+      <UniqueIdentifier>{eb937bf3-f0e6-481b-8f79-5afaa5d6066b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Test2">
+      <UniqueIdentifier>{632ee894-9a87-46cf-a02c-25cf0470cd9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyForm.cpp">
@@ -32,5 +41,15 @@
     <ClInclude Include="Encryptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Tests\Test1\test.txt">
+      <Filter>Tests\Test1</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="C:\Users\Дима\Music\test.mp3">
+      <Filter>Tests\Test2</Filter>
+    </Media>
   </ItemGroup>
 </Project>

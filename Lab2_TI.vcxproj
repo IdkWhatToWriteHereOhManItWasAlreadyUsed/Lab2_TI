@@ -148,6 +148,12 @@
       <DependentUpon>MyForm.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Tests\Test1\test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="C:\Users\Дима\Music\test.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -184,14 +184,14 @@ namespace $safeprojectname$
 				// îòêğûòüToolStripMenuItem
 				// 
 				this->îòêğûòüToolStripMenuItem->Name = L"îòêğûòüToolStripMenuItem";
-				this->îòêğûòüToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+				this->îòêğûòüToolStripMenuItem->Size = System::Drawing::Size(133, 22);
 				this->îòêğûòüToolStripMenuItem->Text = L"Îòêğûòü";
 				this->îòêğûòüToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::îòêğûòüToolStripMenuItem_Click);
 				// 
 				// ñîõğàíèòüToolStripMenuItem
 				// 
 				this->ñîõğàíèòüToolStripMenuItem->Name = L"ñîõğàíèòüToolStripMenuItem";
-				this->ñîõğàíèòüToolStripMenuItem->Size = System::Drawing::Size(180, 22);
+				this->ñîõğàíèòüToolStripMenuItem->Size = System::Drawing::Size(133, 22);
 				this->ñîõğàíèòüToolStripMenuItem->Text = L"Ñîõğàíèòü";
 				this->ñîõğàíèòüToolStripMenuItem->Click += gcnew System::EventHandler(this, &MyForm::ñîõğàíèòüToolStripMenuItem_Click);
 				// 
@@ -221,6 +221,7 @@ namespace $safeprojectname$
 				this->KeyTextBox->Multiline = true;
 				this->KeyTextBox->Name = L"KeyTextBox";
 				this->KeyTextBox->ReadOnly = true;
+				this->KeyTextBox->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 				this->KeyTextBox->Size = System::Drawing::Size(388, 466);
 				this->KeyTextBox->TabIndex = 7;
 				// 
@@ -313,7 +314,7 @@ namespace $safeprojectname$
 				this->Controls->Add(this->menuStrip1);
 				this->MainMenuStrip = this->menuStrip1;
 				this->Name = L"MyForm";
-				this->Text = L"MainForm";
+				this->Text = L"Lazuta 351004 Variant 8";
 				this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 				this->menuStrip1->ResumeLayout(false);
 				this->menuStrip1->PerformLayout();
@@ -353,11 +354,11 @@ namespace $safeprojectname$
 			}
 			const size_t totalBytes = bitArray.size() / bitsPerByte;
 			size_t n;
-			if (totalBytes < 32) {
+			if (totalBytes < 16) {
 				n = totalBytes / 2;
 			}
 			else {
-				n = 32;
+				n = 16;
 			}
 			std::vector<uint8_t> byteArray(totalBytes);
 			for (size_t byteIdx = 0; byteIdx < totalBytes; ++byteIdx) {
@@ -375,11 +376,44 @@ namespace $safeprojectname$
 					<< static_cast<int>(byteArray[i]) << " ";
 			}
 
-			result << "Ïîñëåäíèå " << std::dec << n << " áàéòîâ: ";
+			result << "               Ïîñëåäíèå " << std::dec << n << " áàéòîâ: ";
 			size_t start = byteArray.size() > n ? byteArray.size() - n : 0;
 			for (size_t i = start; i < byteArray.size(); ++i) {
 				result << std::uppercase << std::hex << std::setw(2) << std::setfill('0')
 					<< static_cast<int>(byteArray[i]) << " ";
+			}
+
+			return result.str();
+		}
+#undef min
+
+		std::string formatBitsBinaryInfo(const std::vector<uint8_t>& bitArray) {
+			std::ostringstream result;
+			const size_t bitsPerByte = 8;
+
+			if (bitArray.size() % bitsPerByte != 0) {
+				return "Îøèáêà: ğàçìåğ ìàññèâà áèòîâ äîëæåí áûòü êğàòåí 8";
+			}
+
+			const size_t totalBytes = bitArray.size() / bitsPerByte / 2;
+			size_t n = std::min(totalBytes, static_cast<size_t>(32)); 
+			result << "                      Ïåğâûå " << n << " áàéòîâ: \n";
+			for (size_t i = 0; i < n && i < totalBytes; ++i) {
+				for (size_t j = 0; j < bitsPerByte; ++j) {
+					size_t pos = i * bitsPerByte + j;
+					result << static_cast<int>(bitArray[pos]);
+				}
+				result << " ";
+			}
+
+			result << "\n                         Ïîñëåäíèå " << n << " áàéòîâ: \n";
+			size_t start = totalBytes > n ? totalBytes - n : 0;
+			for (size_t i = start; i < totalBytes; ++i) {
+				for (size_t j = 0; j < bitsPerByte; ++j) {
+					size_t pos = i * bitsPerByte + j;
+					result << static_cast<int>(bitArray[pos]);
+				}
+				result << " ";
 			}
 
 			return result.str();
@@ -410,7 +444,7 @@ namespace $safeprojectname$
 
 			std::vector<uint8_t> generatedKey = generateKey(keyBytes, encpyptor->plainText.size());
 
-			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey));
+			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey)) + msclr::interop::marshal_as<System::String^>(formatBitsBinaryInfo(generatedKey));
 
 
 			encpyptor->cipherText.resize(encpyptor->plainText.size());
