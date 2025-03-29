@@ -358,8 +358,8 @@ namespace $safeprojectname$
 			}
 			const size_t totalBytes = bitArray.size() / bitsPerByte;
 			size_t n;
-			if (totalBytes < 32) {
-				n = totalBytes / 2;
+			if (totalBytes < 16) {
+				n = totalBytes;
 			}
 			else {
 				n = 16;
@@ -401,6 +401,19 @@ namespace $safeprojectname$
 
 			const size_t totalBytes = bitArray.size() / bitsPerByte / 2;
 			size_t n = std::min(totalBytes, static_cast<size_t>(16)); 
+			if (n == totalBytes)
+			{
+				for (size_t i = 0; i < totalBytes; ++i) {
+					for (size_t j = 0; j < bitsPerByte; ++j) {
+						size_t pos = i * bitsPerByte + j;
+						result << static_cast<int>(bitArray[pos]);
+					}
+					result << " ";
+				}
+				return result.str();
+			}
+
+
 			result << "                      Первые " << n << " байтов: \n";
 			for (size_t i = 0; i < n && i < totalBytes; ++i) {
 				for (size_t j = 0; j < bitsPerByte; ++j) {
@@ -458,7 +471,7 @@ namespace $safeprojectname$
 
 			RegisterTextBox->Text = msclr::interop::marshal_as<System::String^>(filteredKey);
 
-			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey)) + msclr::interop::marshal_as<System::String^>(formatBitsBinaryInfo(generatedKey));
+			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey));
 			
 
 		//	
