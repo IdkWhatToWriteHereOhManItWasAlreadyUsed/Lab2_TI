@@ -349,7 +349,7 @@ namespace $safeprojectname$
 			return RegisterLengthLabel->Text == polynomial[0].ToString() && PlainTextBox->Text->Length > 0;
 		}
 
-		std::string formatBitsInfo(const std::vector<uint8_t>& bitArray)
+		std::string formatBitssInfo(const std::vector<uint8_t>& bitArray)
 		{
 			std::ostringstream result;
 			const size_t bitsPerByte = 8;
@@ -389,46 +389,46 @@ namespace $safeprojectname$
 
 			return result.str();
 		}
-#undef min
 
-		std::string formatBitsBinaryInfo(const std::vector<uint8_t>& bitArray) {
+		std::string formatBitsInfo(const std::vector<uint8_t>& bitArray) {
 			std::ostringstream result;
 			const size_t bitsPerByte = 8;
-
 			if (bitArray.size() % bitsPerByte != 0) {
 				return "Ошибка: размер массива битов должен быть кратен 8";
 			}
-
-			const size_t totalBytes = bitArray.size() / bitsPerByte / 2;
-			size_t n = std::min(totalBytes, static_cast<size_t>(16)); 
-			if (n == totalBytes)
-			{
-				for (size_t i = 0; i < totalBytes; ++i) {
-					for (size_t j = 0; j < bitsPerByte; ++j) {
-						size_t pos = i * bitsPerByte + j;
-						result << static_cast<int>(bitArray[pos]);
-					}
-					result << " ";
+			const size_t totalBytes = bitArray.size() / bitsPerByte;
+			size_t n;
+			if (totalBytes < 16) {
+				n = totalBytes;
+			}
+			else {
+				n = 16;
+			}
+			std::vector<uint8_t> byteArray(totalBytes);
+			for (size_t byteIdx = 0; byteIdx < totalBytes; ++byteIdx) {
+				uint8_t byte = 0;
+				for (size_t bitIdx = 0; bitIdx < bitsPerByte; ++bitIdx) {
+					size_t pos = byteIdx * bitsPerByte + bitIdx;
+					byte |= (bitArray[pos] & 0x1) << bitIdx;
 				}
-				return result.str();
+				byteArray[byteIdx] = byte;
 			}
 
-
-			result << "                      Первые " << n << " байтов: \n";
-			for (size_t i = 0; i < n && i < totalBytes; ++i) {
-				for (size_t j = 0; j < bitsPerByte; ++j) {
-					size_t pos = i * bitsPerByte + j;
-					result << static_cast<int>(bitArray[pos]);
+			result << "Первые " << n << " байтов: ";
+			for (size_t i = 0; i < n && i < byteArray.size(); ++i) {
+				// Форматируем байт в бинарном виде
+				for (int bit = bitsPerByte - 1; bit >= 0; --bit) {
+					result << ((byteArray[i] >> bit) & 0x1);
 				}
 				result << " ";
 			}
 
-			result << "\n                         Последние " << n << " байтов: \n";
-			size_t start = totalBytes > n ? totalBytes - n : 0;
-			for (size_t i = start; i < totalBytes; ++i) {
-				for (size_t j = 0; j < bitsPerByte; ++j) {
-					size_t pos = i * bitsPerByte + j;
-					result << static_cast<int>(bitArray[pos]);
+			result << "                                        Последние " << n << " байтов: ";
+			size_t start = byteArray.size() > n ? byteArray.size() - n : 0;
+			for (size_t i = start; i < byteArray.size(); ++i) {
+				// Форматируем байт в бинарном виде
+				for (int bit = bitsPerByte - 1; bit >= 0; --bit) {
+					result << ((byteArray[i] >> bit) & 0x1);
 				}
 				result << " ";
 			}
@@ -436,6 +436,7 @@ namespace $safeprojectname$
 			return result.str();
 		}
 
+#undef min
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -545,34 +546,29 @@ private: System::Void оРазработчикеToolStripMenuItem_Click(System::Object^ sende
 {
 	MessageBox::Show("Лазута Дмитрий. Группа 351004");
 }
+	   void saveBitsToFile(const std::vector<uint8_t>& bitArray, const std::string& filename) 
+	   {
+		   std::ofstream outFile(filename, std::ios::binary);
+		   if (!outFile) {
+			   throw std::runtime_error("Ошибка открытия: " + filename);
+		   }
 
+		   for (size_t i = 0; i < bitArray.size(); i += 8) {
+			   uint8_t byte = 0;
+			   for (size_t j = 0; j < 8; ++j) {
+				   size_t bitPos = i + j;
+				   if (bitArray[bitPos] > 1) {
+					   throw std::invalid_argument(".....");
+				   }
+				   byte |= (bitArray[bitPos] << j);
+			   }
+			   outFile.put(byte);
+		   }
 
-	void saveBitsToFile(const std::vector<uint8_t>& bitArray, const std::string& filename) {
-		if (bitArray.size() % 8 != 0) {
-			throw std::invalid_argument("Размер массива битов должен быть кратен 8");
-		}
-
-		std::ofstream outFile(filename, std::ios::binary);
-		if (!outFile) {
-			throw std::runtime_error("Не удалось открыть файл для записи: " + filename);
-		}
-
-		for (size_t i = 0; i < bitArray.size(); i += 8) {
-			uint8_t byte = 0;
-			for (size_t j = 0; j < 8; ++j) {
-				size_t bitPos = i + j;
-				if (bitArray[bitPos] > 1) {
-					throw std::invalid_argument("Элементы массива должны быть 0 или 1");
-				}
-				byte |= (bitArray[bitPos] << j);
-			}
-			outFile.put(byte);
-		}
-
-		if (!outFile.good()) {
-			throw std::runtime_error("Ошибка записи в файл: " + filename);
-		}
-	}
+		   if (!outFile.good()) {
+			   throw std::runtime_error("Ошибка записи " + filename);
+		   }
+	   }
 
 private: System::Void сохранитьToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) 
 {
