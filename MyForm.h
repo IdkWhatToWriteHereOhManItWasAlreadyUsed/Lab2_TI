@@ -396,41 +396,28 @@ namespace $safeprojectname$
 			if (bitArray.size() % bitsPerByte != 0) {
 				return "Ошибка: размер массива битов должен быть кратен 8";
 			}
-			const size_t totalBytes = bitArray.size() / bitsPerByte;
+			const int totalBytes = bitArray.size();
 			size_t n;
-			if (totalBytes < 16) {
+			if (totalBytes < 16*8) {
 				n = totalBytes;
 			}
 			else {
-				n = 16;
-			}
-			std::vector<uint8_t> byteArray(totalBytes);
-			for (size_t byteIdx = 0; byteIdx < totalBytes; ++byteIdx) {
-				uint8_t byte = 0;
-				for (size_t bitIdx = 0; bitIdx < bitsPerByte; ++bitIdx) {
-					size_t pos = byteIdx * bitsPerByte + bitIdx;
-					byte |= (bitArray[pos] & 0x1) << bitIdx;
-				}
-				byteArray[byteIdx] = byte;
+				n = 16*8;
 			}
 
-			result << "Первые " << n << " байтов: ";
-			for (size_t i = 0; i < n && i < byteArray.size(); ++i) {
-				// Форматируем байт в бинарном виде
-				for (int bit = bitsPerByte - 1; bit >= 0; --bit) {
-					result << ((byteArray[i] >> bit) & 0x1);
-				}
-				result << " ";
+			result << "Первые " << n / 8 << " байтов: ";
+			for (size_t i = 0; i < n; ++i) {
+				result << char(bitArray[i] + '0');
+				if (i % 8 == 7)
+					result << " ";
 			}
 
-			result << "                                        Последние " << n << " байтов: ";
-			size_t start = byteArray.size() > n ? byteArray.size() - n : 0;
-			for (size_t i = start; i < byteArray.size(); ++i) {
-				// Форматируем байт в бинарном виде
-				for (int bit = bitsPerByte - 1; bit >= 0; --bit) {
-					result << ((byteArray[i] >> bit) & 0x1);
-				}
-				result << " ";
+			result << "                                        Последние " << n / 8 << " байтов: ";
+			size_t start = bitArray.size() > n ? bitArray.size() - n : 0;
+			for (size_t i = start; i < bitArray.size(); ++i) {
+				result << char(bitArray[i] + '0');
+				if (i % 8 == 7)
+					result << " ";
 			}
 
 			return result.str();
