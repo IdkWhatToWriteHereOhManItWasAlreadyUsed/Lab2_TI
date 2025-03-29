@@ -435,6 +435,8 @@ namespace $safeprojectname$
 			std::string filteredKey;
 			size_t i = 0;
 
+			
+
 			for (char c : msclr::interop::marshal_as<std::string>(RegisterTextBox->Text)) {
 				if (c == '0' || c == '1') {
 					if (i < keyLength) {
@@ -444,26 +446,25 @@ namespace $safeprojectname$
 				}
 			}
 
-			RegisterTextBox->Text = msclr::interop::marshal_as<System::String^>(filteredKey);
 			int a = GetTickCount();
-
+			//
 			std::vector<uint8_t> generatedKey = generateKey(keyBytes, encpyptor->plainText.size());
-
-
-			MessageBox::Show(msclr::interop::marshal_as<System::String^>(GetTickCount() - a));
-			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey)) + msclr::interop::marshal_as<System::String^>(formatBitsBinaryInfo(generatedKey));
 			encpyptor->cipherText.resize(encpyptor->plainText.size());
-
-			GetTickCount();
-
 			for (size_t j = 0; j < encpyptor->plainText.size(); ++j) {
 				encpyptor->cipherText[j] = generatedKey[j] ^ encpyptor->plainText[j];
 			}
+			//
+			MessageBox::Show(msclr::interop::marshal_as<System::String^>(std::to_string(GetTickCount() - a) + " ms"));
 
-			MessageBox::Show(msclr::interop::marshal_as<System::String^>(GetTickCount() - a));
+			RegisterTextBox->Text = msclr::interop::marshal_as<System::String^>(filteredKey);
+
+			KeyTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(generatedKey)) + msclr::interop::marshal_as<System::String^>(formatBitsBinaryInfo(generatedKey));
+			
+
+		//	
 
 			CipheredTextBox->Text = msclr::interop::marshal_as<System::String^>(formatBitsInfo(encpyptor->cipherText));
-		
+			
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
